@@ -5,7 +5,10 @@
 #include "CoreMinimal.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/Character.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "STUBaseCharacter.generated.h"
+
+class USpringArmComponent;
 
 UCLASS()
 class SHOOTTHEMUP_API ASTUBaseCharacter : public ACharacter
@@ -19,8 +22,15 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	USpringArmComponent* SpringArmComponent;
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 	UCameraComponent* CameraComponent;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mouse Speed")
+	float MouseSpeed = 0.5f;
 
 public:	
 	// Called every frame
@@ -31,5 +41,6 @@ public:
 private:
 	void MoveForward(float Amount);
 	void MoveRight(float Amount);
-
+	void LookUp(float Amount);
+	void TurnAround(float Amount);
 };
