@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Camera/CameraComponent.h"
+#include "Components/STUHealthComponent.h"
+#include "Components/TextRenderComponent.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "STUBaseCharacter.generated.h"
@@ -32,6 +34,12 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mouse Speed")
 	float MouseSpeed = 0.5f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	USTUHealthComponent* HealthComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	UTextRenderComponent* HealthTextComponent;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -54,4 +62,6 @@ private:
 	void TurnAround(float Amount);
 	void OnStartRunning();
 	void OnEndRunning();
+
+
 };
