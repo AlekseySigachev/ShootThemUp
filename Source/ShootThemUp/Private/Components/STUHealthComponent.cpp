@@ -4,6 +4,8 @@
 #include "Components/STUHealthComponent.h"
 
 
+DEFINE_LOG_CATEGORY_STATIC(LogHealthComponent, All, All);
+
 USTUHealthComponent::USTUHealthComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
@@ -13,6 +15,7 @@ void USTUHealthComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	Health = MaxHealth;
+	OnHealthChanged.Broadcast(Health);
 
 	AActor* ComponentOwner = GetOwner();
 	if(ComponentOwner)
@@ -23,7 +26,12 @@ void USTUHealthComponent::BeginPlay()
 void USTUHealthComponent::OnTakeAnyDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType,
 	AController* InstigatedBy, AActor* DamageCauser)
 {
-	Health -= Damage;
-	UE_LOG(LogTemp, Display, TEXT("Damage: %f, healt: %f "), Damage, GetHealth())
+	if (Damage <= 0.0f || IsDead()) return;
+	Health = FMath::Clamp(Health - Damage, 0.0f, MaxHealth);
+	OnHealthChanged.Broadcast(Health);
+	if (IsDead())
+	{
+		OnDeath.Broadcast();
+	}
 }
 
