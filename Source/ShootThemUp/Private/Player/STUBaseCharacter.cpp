@@ -4,6 +4,7 @@
 #include "Player/STUBaseCharacter.h"
 #include "Components/InputComponent.h"
 #include "Components/STUCharacterMovementComponent.h"
+#include "GameFramework/Controller.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogBaseCharacter, All, All)
 
@@ -120,4 +121,8 @@ void ASTUBaseCharacter::OnDeath()
 	GetCharacterMovement()->DisableMovement();
 
 	SetLifeSpan(5.0f);
+	if(Controller)
+	{
+		Controller->ChangeState(NAME_Spectating);
+	}
 }

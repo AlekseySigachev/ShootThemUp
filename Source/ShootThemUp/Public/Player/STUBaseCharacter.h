@@ -67,6 +67,5 @@ private:
 	void OnEndRunning();
 	void OnHealthChanged(float Health);
 	void OnDeath();
-
-
+	
 };
