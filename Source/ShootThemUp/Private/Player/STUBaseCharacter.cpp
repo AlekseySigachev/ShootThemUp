@@ -10,7 +10,6 @@
 
 DEFINE_LOG_CATEGORY_STATIC(LogBaseCharacter, All, All)
 
-// Sets default values
 ASTUBaseCharacter::ASTUBaseCharacter(const FObjectInitializer& ObjInit)
 	: Super(ObjInit.SetDefaultSubobjectClass<USTUCharacterMovementComponent>(ACharacter::CharacterMovementComponentName))
 {
@@ -54,13 +53,11 @@ void ASTUBaseCharacter::BeginPlay()
 
 }
 
-// Called every frame
 void ASTUBaseCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
 
-// Called to bind functionality to input
 void ASTUBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
