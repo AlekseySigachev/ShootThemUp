@@ -2,6 +2,8 @@
 
 
 #include "Player/STUBaseCharacter.h"
+
+#include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
 #include "Components/STUCharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
@@ -72,7 +74,8 @@ void ASTUBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	
 	PlayerInputComponent->BindAction("Run", IE_Pressed, this, &ASTUBaseCharacter::OnStartRunning);
 	PlayerInputComponent->BindAction("Run", IE_Released, this, &ASTUBaseCharacter::OnEndRunning);
-	PlayerInputComponent->BindAction("Fire", IE_Pressed, WeaponComponent, &USTUWeaponComponent::Fire);
+	PlayerInputComponent->BindAction("Fire", IE_Pressed, WeaponComponent, &USTUWeaponComponent::StartFire);
+	PlayerInputComponent->BindAction("Fire", IE_Released, WeaponComponent, &USTUWeaponComponent::StopFire);
 }
 
 bool ASTUBaseCharacter::IsRunning() const
@@ -139,6 +142,7 @@ void ASTUBaseCharacter::OnDeath()
 	{
 		Controller->ChangeState(NAME_Spectating);
 	}
+	GetCapsuleComponent()->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 }
 
 void ASTUBaseCharacter::OnGroundLanded(const FHitResult& Hit)
