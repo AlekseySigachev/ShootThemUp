@@ -6,6 +6,22 @@
 #include "GameFramework/Actor.h"
 #include "STUBaseWeapon.generated.h"
 
+USTRUCT(BlueprintType)
+struct FAmmoData
+{
+	GENERATED_USTRUCT_BODY()
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
+	int32 Bullets;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon",
+		meta = (EditConditionHides = "!Infinite"), meta = (EditCondition = "!Infinite"))
+	int32 Clips;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
+	bool Infinite;
+};
+
 UCLASS()
 class SHOOTTHEMUP_API ASTUBaseWeapon : public AActor
 {
@@ -21,12 +37,15 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Components")
 	USkeletalMeshComponent* WeaponMesh;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
 	FName MuzzleSocketName = "MuzzleSocket";
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
 	float TraceNaxDistance = 2500.0f;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
+	FAmmoData DefaultAmmo{15, 10, false};
+	
 	UFUNCTION()
 	APlayerController* GetPlayerController() const;
 
@@ -44,6 +63,13 @@ protected:
 	
 	virtual void BeginPlay() override;
 	virtual void MakeShot();
+
+	void DecreaseAmmo();
+	bool IsAmmoEmpty() const;
+	bool IsClipEmpty() const;
+	void ChangeClip();
+	void LogAmmo();
 	
 private:
+	FAmmoData CurrentAmmo;
 };
