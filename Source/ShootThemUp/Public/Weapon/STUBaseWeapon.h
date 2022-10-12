@@ -18,17 +18,14 @@ public:
 	virtual void StopFire();
 
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Components")
 	USkeletalMeshComponent* WeaponMesh;
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	FName MuzzleSocketName = "MuzzleSocket";
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	float TraceNaxDistance = 2500.0f;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Damage")
-	float DamageAmount = 10.0f;
 
 	UFUNCTION()
 	APlayerController* GetPlayerController() const;
@@ -45,11 +42,8 @@ protected:
 	UFUNCTION()
 	void MakeHit(FHitResult& HitResult, const FVector& TraceStart, const FVector& TraceEnd);
 	
-	UFUNCTION()
-	void MakeDamage(const FHitResult& HitResult);
-
 	virtual void BeginPlay() override;
 	virtual void MakeShot();
-
+	
 private:
 };

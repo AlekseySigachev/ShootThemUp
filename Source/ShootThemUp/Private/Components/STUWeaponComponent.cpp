@@ -13,20 +13,53 @@ USTUWeaponComponent::USTUWeaponComponent()
 void USTUWeaponComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	SpawnWeapon();
+	SpawnWeapons();
+	
+	CurrentWeaponIndex = 0;
+	EquipWeapon(CurrentWeaponIndex);
 }
-void USTUWeaponComponent::SpawnWeapon()
+
+void USTUWeaponComponent::SpawnWeapons()
 {
-	if (!GetWorld()) return;
+	ACharacter* Character = Cast<ACharacter>(GetOwner());
+	if (!GetWorld() || !Character) return;
+
+	for (auto WeaponClass : WeaponClasses)
+	{
+		auto Weapon = GetWorld()->SpawnActor<ASTUBaseWeapon>(WeaponClass);
+		if (!Weapon) continue;
+
+		Weapon->SetOwner(Character);
+		Weapons.Add(Weapon);
+
+		AttachToWeaponSocket(Weapon, Character->GetMesh(), WeaponArmorySocketName);
+	}
+}
+
+void USTUWeaponComponent::AttachToWeaponSocket(ASTUBaseWeapon* Weapon, USceneComponent* SceneComponent,
+                                               const FName& SocketName)
+{
+	if(!Weapon || !SceneComponent) return;
+	
+	FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, false);
+	Weapon->AttachToComponent(SceneComponent, AttachmentRules, SocketName);
+}
+
+void USTUWeaponComponent::EquipWeapon(int32 WeaponIndex)
+{
 	ACharacter* Character = Cast<ACharacter>(GetOwner());
 	if(!Character) return;
-	
-	CurrentWeapon = GetWorld()->SpawnActor<ASTUBaseWeapon>(WeaponClass);
-	if (!CurrentWeapon) return;
-	FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, false);
-	CurrentWeapon->AttachToComponent(Character->GetMesh(), AttachmentRules, WeaponAttachPointName);
-	CurrentWeapon->SetOwner(Character);
+
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->StopFire();
+		AttachToWeaponSocket(CurrentWeapon, Character->GetMesh(), WeaponArmorySocketName);		
+	}
+
+	CurrentWeapon = Weapons[WeaponIndex];
+	AttachToWeaponSocket(CurrentWeapon, Character->GetMesh(), WeaponEqipSocketName);
 }
+
 void USTUWeaponComponent::StartFire()
 {
 	if(!CurrentWeapon) return;
@@ -38,3 +71,23 @@ void USTUWeaponComponent::StopFire()
 	if(!CurrentWeapon) return;
 	CurrentWeapon->StopFire();
 }
+
+void USTUWeaponComponent::NextWeapon()
+{
+	CurrentWeaponIndex = (CurrentWeaponIndex + 1) % Weapons.Num();
+	EquipWeapon(CurrentWeaponIndex);
+}
+
+void USTUWeaponComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+	CurrentWeapon = nullptr;
+	for (auto Weapon : Weapons)
+	{
+		Weapon->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+		Weapon->Destroy();
+	}
+	
+	Weapons.Empty();
+}
+

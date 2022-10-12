@@ -23,6 +23,12 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Damage")
 	float BulletSpread = 1.5f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Damage")
+	float DamageAmount = 10.0f;
+	
+	UFUNCTION()
+	void MakeDamage(const FHitResult& HitResult);
 	
 	virtual  void MakeShot() override;
 

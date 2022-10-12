@@ -53,3 +53,13 @@ bool ASTURifleWeapon::GetTraceData(FVector& TraceStart, FVector& TraceEnd) const
 	TraceEnd = TraceStart + ShootDirection * TraceNaxDistance;
 	return true;
 }
+
+void ASTURifleWeapon::MakeDamage(const FHitResult& HitResult)
+{
+	const auto DamagedActor = HitResult.GetActor();
+	if(!DamagedActor) return;
+
+	DamagedActor->TakeDamage(DamageAmount, FDamageEvent(),
+		GetPlayerController(), this);
+	UE_LOG(LogTemp, Display, TEXT("Bone is: %s"), *HitResult.BoneName.ToString());
+}
