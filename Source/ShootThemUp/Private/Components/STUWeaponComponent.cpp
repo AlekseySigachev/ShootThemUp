@@ -2,8 +2,12 @@
 
 
 #include "Components/STUWeaponComponent.h"
+
+#include "Animations/STUEquipFinishedAnimNotify.h"
 #include "Weapon/STUBaseWeapon.h"
 #include "GameFramework/Character.h"
+
+DEFINE_LOG_CATEGORY_STATIC(LogWeaponComponent, All, All);
 
 USTUWeaponComponent::USTUWeaponComponent()
 {
@@ -16,6 +20,7 @@ void USTUWeaponComponent::BeginPlay()
 	SpawnWeapons();
 	
 	CurrentWeaponIndex = 0;
+	InitAnimations();
 	EquipWeapon(CurrentWeaponIndex);
 }
 
@@ -58,6 +63,7 @@ void USTUWeaponComponent::EquipWeapon(int32 WeaponIndex)
 
 	CurrentWeapon = Weapons[WeaponIndex];
 	AttachToWeaponSocket(CurrentWeapon, Character->GetMesh(), WeaponEqipSocketName);
+	PlayAnimMontaget(EquipAnimMontage);
 }
 
 void USTUWeaponComponent::StartFire()
@@ -76,6 +82,40 @@ void USTUWeaponComponent::NextWeapon()
 {
 	CurrentWeaponIndex = (CurrentWeaponIndex + 1) % Weapons.Num();
 	EquipWeapon(CurrentWeaponIndex);
+}
+
+void USTUWeaponComponent::PlayAnimMontaget(UAnimMontage* Animation)
+{
+	ACharacter* Character = Cast<ACharacter>(GetOwner());
+	if(!Character) return;
+
+	Character->PlayAnimMontage(Animation);
+}
+
+void USTUWeaponComponent::InitAnimations()
+{
+	if(!EquipAnimMontage) return;
+	const auto NotifyEvents = EquipAnimMontage->Notifies;
+	for(auto NotifyEvent : NotifyEvents)
+	{
+		auto EquipFinishNotify = Cast<USTUEquipFinishedAnimNotify>(NotifyEvent.Notify);
+		if(EquipFinishNotify)
+		{
+			EquipFinishNotify->OnNotified.AddUObject(this, &USTUWeaponComponent::OnEqiupFinished);
+			break;
+		}
+	}
+}
+
+void USTUWeaponComponent::OnEqiupFinished(USkeletalMeshComponent* MeshComponent)
+{
+	ACharacter* Character = Cast<ACharacter>(GetOwner());
+	if(!Character) return;
+
+	if(Character->GetMesh() == MeshComponent)
+	{
+		UE_LOG(LogWeaponComponent, Display, TEXT("Equip finished"));
+	}
 }
 
 void USTUWeaponComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
