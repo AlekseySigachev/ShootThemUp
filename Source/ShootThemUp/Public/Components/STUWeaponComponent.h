@@ -46,6 +46,8 @@ private:
 	UPROPERTY()
 	int32 CurrentWeaponIndex = 0;
 
+	bool EquipAnimInProgress = false;
+
 	void AttachToWeaponSocket(ASTUBaseWeapon* Weapon, USceneComponent* SceneComponent, const FName& SocketName);
 	void SpawnWeapons();
 
@@ -57,4 +59,7 @@ private:
 	void PlayAnimMontaget(UAnimMontage* Animation);
 	void InitAnimations();
 	void OnEqiupFinished(USkeletalMeshComponent* MeshComponent);
+
+	bool CanFire() const;
+	bool CanEquip() const;
 };
