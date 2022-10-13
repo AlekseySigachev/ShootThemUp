@@ -22,6 +22,8 @@ public:
 	virtual void StartFire();
 	virtual void StopFire();
 
+	FWeaponUIData GetUiData() const { return UIData; }
+
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Components")
 	USkeletalMeshComponent* WeaponMesh;
@@ -34,6 +36,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
 	FAmmoData DefaultAmmo{15, 10, false};
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
+	FWeaponUIData UIData;
 	
 	UFUNCTION()
 	APlayerController* GetPlayerController() const;

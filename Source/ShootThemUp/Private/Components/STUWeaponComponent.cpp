@@ -141,6 +141,16 @@ void USTUWeaponComponent::Reload()
 	ChangeClip();
 }
 
+bool USTUWeaponComponent::GetWeaponUIData(FWeaponUIData& UIData) const
+{
+	if(CurrentWeapon)
+	{
+		UIData = CurrentWeapon->GetUiData();
+		return true;
+	}
+	return  false;
+}
+
 void USTUWeaponComponent::OnReloadFinished(USkeletalMeshComponent* MeshComponent)
 {
 	ACharacter* Character = Cast<ACharacter>(GetOwner());
