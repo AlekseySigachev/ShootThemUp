@@ -5,26 +5,39 @@
 
 #include "Components/STUHealthComponent.h"
 #include "Components/STUWeaponComponent.h"
+#include "STUUtils.h"
 
 
 float USTU_PlayerHUDWidget::GetHealthPercent() const
 {
-	const auto Player = GetOwningPlayerPawn();
-	if(!Player) return 0.0f;
-
-	const auto Component = Player->GetComponentByClass(USTUHealthComponent::StaticClass());
-	const auto HealthComponent = Cast<USTUHealthComponent>(Component);
+	const auto HealthComponent = STUUtils::GetSTUPlayerComponent<USTUHealthComponent>(GetOwningPlayerPawn());
 	if(!HealthComponent) return 0.0f;
 	return HealthComponent->GetHealthPercent();
 }
 
-bool USTU_PlayerHUDWidget::GetWeaponUiData(FWeaponUIData& UIData) const
+bool USTU_PlayerHUDWidget::GetCurrentWeaponUiData(FWeaponUIData& UIData) const
 {
-	const auto Player = GetOwningPlayerPawn();
-	if(!Player) return false;
-
-	const auto Component = Player->GetComponentByClass(USTUWeaponComponent::StaticClass());
-	const auto WeaponComponent = Cast<USTUWeaponComponent>(Component);
+	auto const WeaponComponent = STUUtils::GetSTUPlayerComponent<USTUWeaponComponent>(GetOwningPlayerPawn());
 	if(!WeaponComponent) return false;
-	return WeaponComponent->GetWeaponUIData(UIData);
+	return WeaponComponent->GetCurrentWeaponUIData(UIData);
 }
+
+bool USTU_PlayerHUDWidget::GetCurrentWeaponAmmoData(FAmmoData& AmmoData) const
+{
+	auto const WeaponComponent = STUUtils::GetSTUPlayerComponent<USTUWeaponComponent>(GetOwningPlayerPawn());
+	return WeaponComponent->GetCurrentWeaponAmmoData(AmmoData);
+}
+
+bool USTU_PlayerHUDWidget::IsPlayerAlive() const
+{
+	const auto HealthComponent = STUUtils::GetSTUPlayerComponent<USTUHealthComponent>(GetOwningPlayerPawn());
+	return HealthComponent && !HealthComponent->IsDead();
+}
+
+bool USTU_PlayerHUDWidget::IsPlayerSpectating() const
+{
+	const auto Controller = GetOwningPlayer();
+	return Controller && Controller->GetStateName() == NAME_Spectating;
+}
+
+
