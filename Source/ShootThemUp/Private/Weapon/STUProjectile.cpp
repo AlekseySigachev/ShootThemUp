@@ -5,6 +5,7 @@
 
 #include "AudioDevice.h"
 #include "Kismet/GameplayStatics.h"
+#include "Weapon/STUWeaponFXComponent.h"
 
 ASTUProjectile::ASTUProjectile()
 {
@@ -14,16 +15,20 @@ ASTUProjectile::ASTUProjectile()
 	CollisionComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	CollisionComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
 	CollisionComponent->IgnoreActorWhenMoving(GetOwner(), true);
+	CollisionComponent->bReturnMaterialOnMove = true;
 
 	SetRootComponent(CollisionComponent);
 
 	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>
 		(TEXT("ProjectileMovementComponent"));
+	
+	WeaponFXComponent = CreateDefaultSubobject<USTUWeaponFXComponent>("WeaponFXComponent");
 }
 
 void ASTUProjectile::BeginPlay()
 {
 	Super::BeginPlay();
+	check(WeaponFXComponent);
 	check(ProjectileMovementComponent)
 	check(CollisionComponent)
 	ProjectileMovementComponent->Velocity = ShotDirection * ProjectileMovementComponent->InitialSpeed;
@@ -47,14 +52,8 @@ void ASTUProjectile::OnProjectileHit(UPrimitiveComponent* HitComponent, AActor* 
 		GetController(),
 		DoFullDamage);
 
-	DrawDebugSphere(
-		GetWorld(),
-		GetActorLocation(),
-		DamageRadius,
-		24,
-		FColor::Red,
-		false,
-		LifeSeconds);
+	//DrawDebugSphere(GetWorld(),GetActorLocation(),DamageRadius,24,FColor::Red,false,LifeSeconds);
+	WeaponFXComponent->PlayImpactFX(Hit);
 
 	Destroy();
 }

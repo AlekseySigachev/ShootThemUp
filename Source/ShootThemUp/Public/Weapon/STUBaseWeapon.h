@@ -18,6 +18,8 @@ public:
 
 	void ChangeClip();
 	bool CanReload() const;
+
+	bool TryToAddAmmo(int32 ClipsAmount);
 	
 	virtual void StartFire();
 	virtual void StopFire();
@@ -63,7 +65,9 @@ protected:
 	void DecreaseAmmo();
 	bool IsAmmoEmpty() const;
 	bool IsClipEmpty() const;
+	bool IsAmmoFull() const;
 	void LogAmmo();
+	
 	
 private:
 	FAmmoData CurrentAmmo;
