@@ -43,7 +43,7 @@ void ASTUBaseCharacter::BeginPlay()
 	
 	//OnTakeAnyDamage.AddDynamic(this, &ASTUBaseCharacter::OnTakeAnyDamageHandle);
 	
-	OnHealthChanged(HealthComponent->GetHealth());
+	OnHealthChanged(HealthComponent->GetHealth(), 0.0f);
 	HealthComponent->OnDeath.AddUObject(this,&ASTUBaseCharacter::OnDeath);
 	HealthComponent->OnHealthChanged.AddUObject(this, &ASTUBaseCharacter::OnHealthChanged);
 
@@ -124,7 +124,7 @@ void ASTUBaseCharacter::OnEndRunning()
 	WantsToRun = false;
 }
 
-void ASTUBaseCharacter::OnHealthChanged(float Health)
+void ASTUBaseCharacter::OnHealthChanged(float Health, float HealthDelta)
 {
 	HealthTextComponent->SetText(FText::FromString(FString::Printf(TEXT("%.0f"), Health)));
 }
@@ -132,7 +132,7 @@ void ASTUBaseCharacter::OnHealthChanged(float Health)
 void ASTUBaseCharacter::OnDeath()
 {
 	UE_LOG(LogBaseCharacter,Display, TEXT("%s is dead"), *GetName());
-	PlayAnimMontage(DeathAnimMontage);
+	//PlayAnimMontage(DeathAnimMontage);
 	GetCharacterMovement()->DisableMovement();
 
 	SetLifeSpan(LifeSpanOnDeath);
@@ -142,6 +142,12 @@ void ASTUBaseCharacter::OnDeath()
 	}
 	GetCapsuleComponent()->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 	WeaponComponent->StopFire();
+	if(GetMesh())
+	{
+		GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+		GetMesh()->SetSimulatePhysics(true);	
+	}
+	
 }
 
 void ASTUBaseCharacter::OnGroundLanded(const FHitResult& Hit)

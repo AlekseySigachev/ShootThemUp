@@ -40,4 +40,22 @@ bool USTU_PlayerHUDWidget::IsPlayerSpectating() const
 	return Controller && Controller->GetStateName() == NAME_Spectating;
 }
 
+bool USTU_PlayerHUDWidget::Initialize()
+{
+	const auto HealthComponent = STUUtils::GetSTUPlayerComponent<USTUHealthComponent>(GetOwningPlayerPawn());
+	if(HealthComponent)
+	{
+		HealthComponent->OnHealthChanged.AddUObject(this, &USTU_PlayerHUDWidget::OnHealthChanged);
+	}
+	return Super::Initialize();
+}
+
+void USTU_PlayerHUDWidget::OnHealthChanged(float Health, float HealthDelta)
+{
+	if(HealthDelta < 0.0f)
+	{
+		OnTakeDamage();		
+	}
+}
+
 
