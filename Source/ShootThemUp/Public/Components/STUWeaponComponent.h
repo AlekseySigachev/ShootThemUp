@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "STUCoreTypes.h"
+#include "AI/Decorators/STUNeedAmmoDecorator.h"
 #include "Weapon/STUBaseWeapon.h"
 #include "STUWeaponComponent.generated.h"
 
@@ -28,8 +29,9 @@ public:
 	bool GetCurrentWeaponAmmoData(FAmmoData& AmmoData) const;
 
 	bool TryToAddAmmo(TSubclassOf<ASTUBaseWeapon> WeaponType, int32 ClipsAmount);
-	
-	
+	bool NeedAmmo(TSubclassOf<ASTUBaseWeapon> WeaponType);
+
+
 protected:
 
 	void EquipWeapon(int32 WeaponIndex);
