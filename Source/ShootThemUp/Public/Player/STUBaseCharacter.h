@@ -26,6 +26,7 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	virtual void OnDeath();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	USpringArmComponent* SpringArmComponent;
@@ -83,7 +84,6 @@ private:
 	void OnEndRunning();
 	
 	void OnHealthChanged(float Health, float HealthDelta);
-	void OnDeath();
 
 	UFUNCTION()
 	void OnGroundLanded(const FHitResult& Hit);

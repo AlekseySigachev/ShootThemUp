@@ -24,6 +24,7 @@ public:
 	bool CanReload() const;
 
 	bool TryToAddAmmo(int32 ClipsAmount);
+
 	
 	virtual void StartFire();
 	virtual void StopFire();
@@ -31,6 +32,7 @@ public:
 	FWeaponUIData GetUiData() const { return UIData; }
 
 	FAmmoData GetAmmoData() const { return CurrentAmmo; }
+	bool IsAmmoEmpty() const;
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Components")
@@ -70,7 +72,6 @@ protected:
 	virtual void MakeShot();
 
 	void DecreaseAmmo();
-	bool IsAmmoEmpty() const;
 	bool IsClipEmpty() const;
 	bool IsAmmoFull() const;
 	void LogAmmo();
